@@ -50,7 +50,7 @@ public class Application implements IApplication {
     Application app = new Application();
     try {
       /*
-       * Step 1 : clear the output directory
+       * Step 1 : clear the output directory 
        */
       app.clearOutputDirectory();
       
