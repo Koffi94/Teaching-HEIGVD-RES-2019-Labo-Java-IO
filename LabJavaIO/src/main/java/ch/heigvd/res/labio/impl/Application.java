@@ -128,11 +128,13 @@ public class Application implements IApplication {
       filePath += "/" + str;
     }
 
+    /* Make dirs if not exist */
     File dir = new File(filePath);
     if(!dir.exists())
       dir.mkdirs();
     FileOutputStream fos = null;
 
+    /* try to write the quotes in files */
     try {
       fos = new FileOutputStream(filePath + "/" + filename);
       fos.write(quote.getQuote().getBytes());
