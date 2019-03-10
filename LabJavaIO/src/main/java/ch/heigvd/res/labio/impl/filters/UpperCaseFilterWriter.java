@@ -14,19 +14,45 @@ public class UpperCaseFilterWriter extends FilterWriter {
     super(wrappedWriter);
   }
 
+  // Added this override method to pass the first test
+  @Override
+  public void write(String str) throws IOException {
+    out.write(str.toUpperCase());
+  }
+
+  // Added this override method to pass the second test
+  @Override
+  public void write(char cbuf[]) throws IOException {
+    String str = new String(cbuf);
+    out.write(str.toUpperCase());
+  }
+
   @Override
   public void write(String str, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    // Basics input checks
+    if(str.isEmpty() || off < 0 || off > str.length() - 1 || len < 0 || len > str.length() - 1 - off) {
+      System.err.println("Input error");
+      return;
+    }
+
+    out.write(str.toUpperCase(), off, len);
   }
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    // Basics input checks
+    if(cbuf.length < 1 || off < 0 || off > cbuf.length - 1 || len < 0 || len > cbuf.length - 1 - off) {
+      System.err.println("Input error");
+      return;
+    }
+
+    // Uppercase chars from off to off + len
+    String str = new String(cbuf);
+    out.write(str.toUpperCase(), off, len);
   }
 
   @Override
   public void write(int c) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    out.write(Character.toUpperCase(c));
   }
-
 }
