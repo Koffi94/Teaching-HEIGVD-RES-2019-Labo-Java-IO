@@ -7,10 +7,8 @@ import ch.heigvd.res.labio.interfaces.IFileExplorer;
 import ch.heigvd.res.labio.interfaces.IFileVisitor;
 import ch.heigvd.res.labio.quotes.QuoteClient;
 import ch.heigvd.res.labio.quotes.Quote;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+
+import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +48,7 @@ public class Application implements IApplication {
     Application app = new Application();
     try {
       /*
-       * Step 1 : clear the output directory 
+       * Step 1 : clear the output directory
        */
       app.clearOutputDirectory();
       
@@ -90,6 +88,7 @@ public class Application implements IApplication {
        * one method provided by this class, which is responsible for storing the content of the
        * quote in a text file (and for generating the directories based on the tags).
        */
+      storeQuote(quote, "quote-" + (i + 1) + ".utf8");
       LOG.info("Received a new joke with " + quote.getTags().size() + " tags.");
       for (String tag : quote.getTags()) {
         LOG.info("> " + tag);
@@ -101,7 +100,7 @@ public class Application implements IApplication {
    * This method deletes the WORKSPACE_DIRECTORY and its content. It uses the
    * apache commons-io library. You should call this method in the main method.
    * 
-   * @throws IOException 
+   * @throws IOException
    */
   void clearOutputDirectory() throws IOException {
     FileUtils.deleteDirectory(new File(WORKSPACE_DIRECTORY));    
@@ -123,7 +122,23 @@ public class Application implements IApplication {
    * @throws IOException 
    */
   void storeQuote(Quote quote, String filename) throws IOException {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
+    /* Get the filepath */
+    String filePath = WORKSPACE_DIRECTORY;
+    for(String str : quote.getTags()) {
+      filePath += "/" + str;
+    }
+
+    File dir = new File(filePath);
+    if(!dir.exists())
+      dir.mkdirs();
+    FileOutputStream fos = null;
+
+    try {
+      fos = new FileOutputStream(filePath + "/" + filename);
+      fos.write(quote.getQuote().getBytes());
+    } catch (IOException e) {
+      System.err.println("Error: " + e);
+    }
   }
   
   /**
@@ -140,6 +155,11 @@ public class Application implements IApplication {
          * of the the IFileVisitor interface inline. You just have to add the body of the visit method, which should
          * be pretty easy (we want to write the filename, including the path, to the writer passed in argument).
          */
+        try {
+          writer.write(file.getPath() + '\n');
+        } catch (IOException e) {
+          System.err.println("Error: " + e);
+        }
       }
     });
   }
