@@ -20,7 +20,36 @@ public class Utils {
    * contain any line separator, then the first element is an empty string.
    */
   public static String[] getNextLine(String lines) {
-    throw new UnsupportedOperationException("The student has not implemented this method yet.");
-  }
+    String[] ret = {"", ""};
 
+    // Check if the argument is not empty
+    if(lines.isEmpty()) {
+      System.err.println("The argument is an empty string");
+      return null;
+    }
+
+    // Add chars in tmp and only copy in ret[0] if we find a '\r' or '\n'
+    int i = 0;
+    String tmp = new String();
+    for(; i < lines.length(); ++i) {
+      tmp += lines.charAt(i);
+      if((lines.charAt(i) == '\r') || (lines.charAt(i) == '\n')) {
+        ret[0] = tmp;
+        if ((lines.charAt(i) == '\r') && (i < lines.length() - 1) && (lines.charAt(i + 1) == '\n')) {
+          ret[0] += '\n';
+          ++i;
+        }
+        break;
+      }
+    }
+
+    // Check if ret[0] is empty then ret[1] is the whole text
+    // and check if it still have chars in lines after fill ret[0], to put the rest in ret[1]
+    if(ret[0].isEmpty())
+      ret[1] = lines;
+    else if(i < lines.length() - 1)
+      ret[1] = lines.substring(i + 1);
+
+    return ret;
+  }
 }
