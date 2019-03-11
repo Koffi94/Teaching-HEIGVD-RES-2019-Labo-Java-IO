@@ -19,7 +19,7 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   private static final Logger LOG = Logger.getLogger(FileNumberingFilterWriter.class.getName());
   private int counterLine = 1; //Compteur de ligne
-  private boolean nextLine = false , maybeWindows = false;
+  private boolean nextLine = false , maybeWindows = false; // flags
 
 
   public FileNumberingFilterWriter(Writer out) {
@@ -28,7 +28,7 @@ public class FileNumberingFilterWriter extends FilterWriter {
 
   @Override
   public void write(String str, int off, int len) throws IOException {
-    this.write(str.toCharArray(), off, len);
+    this.write(str.toCharArray(), off, len); // Call the next one
 
   }
 
@@ -41,34 +41,33 @@ public class FileNumberingFilterWriter extends FilterWriter {
     }
 
     for (int i = off; i < off + len; i++) {
-      this.write(cbuf[i]);
+      this.write(cbuf[i]); // Call the next one
     }
   }
 
   @Override
   public void write(int c) throws IOException {
-
-    // If there is the first line
+    // If it's the first line, start with the "line header"
     if(counterLine == 1) {
       out.write(counterLine++ + "\t");
     }
 
-    // If there is a '\n' then up the nextline flag to put the "header line" for next line
+    // If there is a LF then up the nextline flag to put the "line header" for next line
     if((char)c == '\n') {
       nextLine = true;
     }
 
-    // If there is a '\r', we wait next char to see if it's Windows or MAC OS to put the "header line"
+    // If there is a CR, wait next char to see if it's Windows or MAC OS to put the "line header"
     if((char)c == '\r') {
       maybeWindows = true;
     }
 
-    // If we have '\r' + '\n' then it's Windows -> down the maybeWindows flag
+    // If we have CRLF then it's Windows -> down the maybeWindows flag
     if(maybeWindows && (char)c == '\n') {
       maybeWindows = false;
     }
 
-    // If we have '\r' + anything else except '\n' then it's MAC OS -> write the "header line" before the "anything else" and down th maybeWindows flag
+    // If we have CR + anything else except LF then it's MAC OS -> write the "line header" before the "anything else" and down th maybeWindows flag
     if (maybeWindows && (char)c != '\r'){
       out.write(counterLine++ + "\t");
       maybeWindows = false;
@@ -77,7 +76,7 @@ public class FileNumberingFilterWriter extends FilterWriter {
     // Write the current char
     out.write(c);
 
-    // If we got a '\n' then write the "header line"
+    // If we got a LF then write the "line header"
     if(nextLine) {
       out.write(counterLine++ + "\t");
       nextLine = false;
